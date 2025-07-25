@@ -70,7 +70,7 @@ export default {
 			bodyPreview: body.substring(0, 100),
 		});
 
-		const isValidRequest = verifyKey(
+		const isValidRequest = await verifyKey(
 			body,
 			signature,
 			timestamp,
