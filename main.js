@@ -26,7 +26,7 @@
 
 // We use the 'jose' library for signing the JWT for Google API authentication.
 // It's a modern, platform-agnostic JWT library.
-import { SignJWT } from "jose";
+import { SignJWT, importPKCS8 } from "jose";
 
 // We use 'discord-interactions' to easily verify incoming webhooks from Discord.
 import {
@@ -436,29 +436,43 @@ async function getGoogleAuthToken(env) {
 		"https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive";
 	const aud = "https://oauth2.googleapis.com/token";
 
-	// Import the private key
+	// Import the private key properly for jose
+	const privateKeyPem = credentials.private_key;
 	const privateKey = await crypto.subtle.importKey(
 		"pkcs8",
-		((str) => {
-			const r = str.replace(/(-{5}[^-]+-{5})|\s/g, "");
-			const b = atob(r);
-			const a = new Uint8Array(b.length);
-			for (let i = 0; i < b.length; i++) a[i] = b.charCodeAt(i);
-			return a;
-		})(credentials.private_key),
+		(() => {
+			// Remove the header/footer and whitespace, then decode base64
+			const pemContent = privateKeyPem
+				.replace(/-----BEGIN PRIVATE KEY-----/, "")
+				.replace(/-----END PRIVATE KEY-----/, "")
+				.replace(/\s/g, "");
+			const binaryString = atob(pemContent);
+			const bytes = new Uint8Array(binaryString.length);
+			for (let i = 0; i < binaryString.length; i++) {
+				bytes[i] = binaryString.charCodeAt(i);
+			}
+			return bytes;
+		})(),
 		{ name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
 		false,
 		["sign"]
 	);
 
 	const now = Math.floor(Date.now() / 1000);
-	const jwt = await new SignJWT({ scope })
+
+	// Use the importPKCS8 method from jose instead
+	const { importPKCS8, SignJWT } = await import("jose");
+	const key = await importPKCS8(privateKeyPem, "RS256");
+
+	const jwt = await new SignJWT({
+		iss: credentials.client_email,
+		scope: scope,
+		aud: aud,
+		iat: now,
+		exp: now + 3600,
+	})
 		.setProtectedHeader({ alg: "RS256", typ: "JWT" })
-		.setIssuedAt(now)
-		.setExpirationTime(now + 3600)
-		.setIssuer(credentials.client_email)
-		.setAudience(aud)
-		.sign(privateKey);
+		.sign(key);
 
 	const response = await fetch(aud, {
 		method: "POST",
@@ -477,7 +491,6 @@ async function getGoogleAuthToken(env) {
 
 	return googleAuthToken;
 }
-
 /**
  * Retrieves the currency balance for a given user ID.
  * If the user doesn't exist in the sheet, they are created with a balance of 0.
