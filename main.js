@@ -35,7 +35,7 @@ import {
 	verifyKey,
 } from "discord-interactions";
 
-// --- Main Worker Entry Point ---
+// --- Main Worker Entry Point
 export default {
 	async fetch(request, env, ctx) {
 		// A worker's fetch handler is the main entry point for all requests.
@@ -46,11 +46,29 @@ export default {
 			);
 		}
 
-		// 1. Verify the request is from Discord
-		const signature = request.headers.get("X-Signature-Ed25519");
-		const timestamp = request.headers.get("X-Signature-Timestamp");
+		// Log environment variables for debugging
+		console.log("Environment variables check:", {
+			DISCORD_PUBLIC_KEY: env.DISCORD_PUBLIC_KEY ? "set" : "not set",
+			DISCORD_BOT_TOKEN: env.DISCORD_BOT_TOKEN ? "set" : "not set",
+			DISCORD_CLIENT_ID: env.DISCORD_CLIENT_ID ? "set" : "not set",
+			SPREADSHEET_ID: env.SPREADSHEET_ID ? "set" : "not set",
+			GDRIVE_API_CREDENTIALS: env.GDRIVE_API_CREDENTIALS ? "set" : "not set",
+		});
 
+		// 1. Verify the request is from Discord - CORRECTED BACK TO LOWERCASE
+		const signature = request.headers.get("x-signature-ed25519");
+		const timestamp = request.headers.get("x-signature-timestamp");
 		const body = await request.text();
+
+		// Log request details for debugging
+		console.log("Request details:", {
+			signature: signature ? "present" : "missing",
+			timestamp: timestamp ? "present" : "missing",
+			bodyLength: body.length,
+			contentType: request.headers.get("content-type"),
+			userAgent: request.headers.get("user-agent"),
+			bodyPreview: body.substring(0, 100),
+		});
 
 		const isValidRequest = verifyKey(
 			body,
@@ -59,25 +77,36 @@ export default {
 			env.DISCORD_PUBLIC_KEY
 		);
 
+		console.log("Signature verification result:", isValidRequest);
+
 		if (!isValidRequest) {
 			console.error("Invalid request signature");
+			console.log("Verification failed details:", {
+				signaturePresent: !!signature,
+				timestampPresent: !!timestamp,
+				publicKeyPresent: !!env.DISCORD_PUBLIC_KEY,
+				publicKeyLength: env.DISCORD_PUBLIC_KEY
+					? env.DISCORD_PUBLIC_KEY.length
+					: 0,
+			});
 			return new Response("Bad request signature.", { status: 401 });
 		}
 
 		const interaction = JSON.parse(body);
+		console.log("Interaction type:", interaction.type);
 
 		// 2. Handle different interaction types
 		try {
 			switch (interaction.type) {
 				case InteractionType.PING:
 					// Discord pings to check if the endpoint is alive.
+					console.log("Handling PING interaction - sending PONG");
 					return new Response(
 						JSON.stringify({ type: InteractionResponseType.PONG }),
 						{
 							headers: { "Content-Type": "application/json" },
 						}
 					);
-
 				case InteractionType.APPLICATION_COMMAND:
 					// This is a slash command.
 					return await handleApplicationCommand(interaction, env);
