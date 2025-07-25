@@ -47,8 +47,9 @@ export default {
 		}
 
 		// 1. Verify the request is from Discord
-		const signature = request.headers.get("x-signature-ed25519");
-		const timestamp = request.headers.get("x-signature-timestamp");
+		const signature = request.headers.get("X-Signature-Ed25519");
+		const timestamp = request.headers.get("X-Signature-Timestamp");
+
 		const body = await request.text();
 
 		const isValidRequest = verifyKey(
