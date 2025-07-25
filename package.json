@@ -1,0 +1,9 @@
+{
+	"devDependencies": {
+		"wrangler": "^4.26.0"
+	},
+	"dependencies": {
+		"discord-interactions": "^4.3.0",
+		"jose": "^6.0.12"
+	}
+}
