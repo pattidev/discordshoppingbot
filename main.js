@@ -420,7 +420,6 @@ async function buildShopMessage(items, balance, page) {
 // Cloudflare may spin down idle workers, so this cache is not guaranteed to persist for long.
 let googleAuthToken = null;
 let tokenExpiry = 0;
-
 /**
  * Gets a Google API auth token, using a cached one if available and not expired.
  * @param {object} env - The Cloudflare Worker environment variables.
@@ -436,33 +435,10 @@ async function getGoogleAuthToken(env) {
 		"https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive";
 	const aud = "https://oauth2.googleapis.com/token";
 
-	// Import the private key properly for jose
-	const privateKeyPem = credentials.private_key;
-	const privateKey = await crypto.subtle.importKey(
-		"pkcs8",
-		(() => {
-			// Remove the header/footer and whitespace, then decode base64
-			const pemContent = privateKeyPem
-				.replace(/-----BEGIN PRIVATE KEY-----/, "")
-				.replace(/-----END PRIVATE KEY-----/, "")
-				.replace(/\s/g, "");
-			const binaryString = atob(pemContent);
-			const bytes = new Uint8Array(binaryString.length);
-			for (let i = 0; i < binaryString.length; i++) {
-				bytes[i] = binaryString.charCodeAt(i);
-			}
-			return bytes;
-		})(),
-		{ name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
-		false,
-		["sign"]
-	);
-
 	const now = Math.floor(Date.now() / 1000);
 
-	// Use the importPKCS8 method from jose instead
-	const { importPKCS8, SignJWT } = await import("jose");
-	const key = await importPKCS8(privateKeyPem, "RS256");
+	// Use importPKCS8 directly - remove the crypto.subtle.importKey part
+	const key = await importPKCS8(credentials.private_key, "RS256");
 
 	const jwt = await new SignJWT({
 		iss: credentials.client_email,
@@ -491,6 +467,7 @@ async function getGoogleAuthToken(env) {
 
 	return googleAuthToken;
 }
+
 /**
  * Retrieves the currency balance for a given user ID.
  * If the user doesn't exist in the sheet, they are created with a balance of 0.
