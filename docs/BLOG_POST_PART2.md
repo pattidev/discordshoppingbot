@@ -6,7 +6,7 @@
 
 ## Completing the Automation Journey
 
-In [Part 1](BLOG_POST.md), I detailed how I built a serverless Discord economy bot using Cloudflare Workers and Google Sheets, learning that user experience often trumps technical purity. The bot was performing flawlessly—members could purchase roles instantly, my girlfriend could manage the shop independently, and the community was more engaged than ever.
+In [Part 1](docs/BLOG_POST.md), I detailed how I built a serverless Discord economy bot using Cloudflare Workers and Google Sheets, learning that user experience often trumps technical purity. The bot was performing flawlessly—members could purchase roles instantly, my girlfriend could manage the shop independently, and the community was more engaged than ever.
 
 But the automation was incomplete. While the Discord bot had eliminated hours of manual role management, there was still a critical bottleneck: **data collection**.
 
@@ -402,4 +402,4 @@ The project demonstrates that the most impactful automation often comes from und
 
 *The complete technical implementation, including both the serverless Discord bot and computer vision data collection system, is available in the repository. This represents a comprehensive case study in modern automation architecture, demonstrating practical applications of serverless computing, AI integration, and user-centered design.*
 
-*For the complete project overview and professional portfolio context, see the [Portfolio Case Study](PORTFOLIO_CASE_STUDY.md).*
+*For the complete project overview and professional portfolio context, see the [Portfolio Case Study](docs/PORTFOLIO_CASE_STUDY.md).*

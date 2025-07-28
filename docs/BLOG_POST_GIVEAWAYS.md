@@ -6,7 +6,7 @@
 
 ## The Next Evolution: From Automation to Engagement
 
-In [Part 1](BLOG_POST.md) and [Part 2](BLOG_POST_PART2.md), I detailed building a comprehensive Discord community automation system—serverless role management with Cloudflare Workers and AI-powered data collection. The system had achieved its core objectives: 95% reduction in administrative overhead, zero maintenance requirements, and complete user independence.
+In [Part 1](docs/BLOG_POST.md) and [Part 2](docs/BLOG_POST_PART2.md), I detailed building a comprehensive Discord community automation system—serverless role management with Cloudflare Workers and AI-powered data collection. The system had achieved its core objectives: 95% reduction in administrative overhead, zero maintenance requirements, and complete user independence.
 
 But successful communities require more than efficient administration—they need engagement mechanisms that foster participation and build social connections.
 
@@ -530,94 +530,6 @@ Integrated Platform:
 
 ### **System Design Principles Demonstrated**
 
-#### **1. Constraint-Driven Innovation**
-Platform limitations consistently led to better architectural decisions:
-- **JavaScript-only runtime** → Cleaner async patterns and Web API integration
-- **3-second timeouts** → Better user experience through deferred processing
-- **Stateless execution** → Pure functions and testable, composable code
-- **Google Sheets limitations** → Event sourcing patterns and audit capabilities
-
-#### **2. User Experience as Architecture**
-The most successful technical decisions prioritized user empowerment:
-- **Google Sheets database** → Non-technical users gained full control
-- **Interactive Discord embeds** → Rich user experience without custom apps
-- **Transparent fairness** → Trust through clear winner selection
-- **Immediate feedback loops** → User confidence through responsive interfaces
-
-### **Enterprise Application Patterns**
-
-These design patterns apply directly to enterprise system architecture:
-
-**Event-Driven Microservices**: Each component (economy, giveaways, data collection) operates independently while sharing common integration points.
-
-**API-First Design**: All functionality exposed through clean interfaces enables composition and extension.
-
-**User-Centered Architecture**: Technical decisions driven by operator experience rather than implementation convenience.
-
-**Observability by Design**: Audit trails and analytics built into core operations rather than added afterward.
-
-## Conclusion: Building Platforms, Not Just Tools
-
-The giveaway system represents the final piece of a comprehensive automation platform that demonstrates several key professional competencies:
-
-### **Technical Excellence**
-- **Full-Stack Development**: Serverless JavaScript, Python computer vision, Discord API integration
-- **System Architecture**: Event-driven, microservices-based platform design
-- **Data Engineering**: Event sourcing patterns with non-traditional storage solutions
-- **Fair Selection**: Secure random winner selection with transparent processes
-
-### **Business Value Delivery**
-- **600% increase** in community engagement through automated giveaways
-- **98% reduction** in administrative overhead across all systems
-- **99.9% uptime** through serverless architecture and global edge deployment
-- **$0 operational cost** through efficient platform selection and optimization
-
-### **User Experience Innovation**
-- **Zero learning curve** for non-technical administrators
-- **Instant gratification** for community members through interactive interfaces
-- **Transparent fairness** through secure random selection
-- **Professional presentation** through rich Discord embed interfaces
-
-### **The Bigger Picture**
-This project showcases how thoughtful system design can transform manual processes into automated platforms that empower users rather than replace them. The giveaway system doesn't just automate prize distribution—it enables new forms of community engagement that weren't possible with manual processes.
-
-For backend developers and solution architects, this demonstrates that the most impactful systems often come from understanding users deeply, embracing platform constraints as design features, and building composable architectures that grow in value over time.
-
-**The result isn't just code that works—it's a platform that transforms how communities operate, creating new possibilities for engagement while eliminating tedious manual work.**
-
----
-
-*The complete giveaway system implementation is available in the repository as part of the comprehensive Discord community automation platform. This represents practical application of serverless architecture and user-centered system development suitable for enterprise environments.*
-
-*For the complete technical overview and professional portfolio context, see the [Portfolio Case Study](PORTFOLIO_CASE_STUDY.md) and previous posts: [Part 1: Serverless Architecture](BLOG_POST.md) | [Part 2: AI-Powered Data Collection](BLOG_POST_PART2.md)*
-    
-    // Deduct entry cost and add participant
-    await updateCurrency(userId, userBalance - giveaway.entry_cost, env);
-    return await addParticipant(giveawayId, userId, env);
-}
-```
-
-## Professional Insights: From Individual Features to Platform Architecture
-
-### **The Evolution from Tools to Platform**
-What began as individual automation solutions has evolved into a comprehensive community management platform:
-
-```
-Individual Components:
-├── Discord Economy Bot (Role purchasing, daily rewards)
-├── AI Data Collection (Computer vision automation)  
-└── Giveaway System (Engagement and prize distribution)
-
-Integrated Platform:
-├── Shared Authentication Layer (Google API, Discord API)
-├── Common Data Architecture (Google Sheets with consistent schemas)
-├── Unified User Experience (Consistent slash commands, embed styling)
-├── Cross-System Intelligence (Economy feeds giveaways, analytics span systems)
-└── Modular Enhancement (New features integrate seamlessly)
-```
-
-### **System Design Principles Demonstrated**
-
 #### **1. Algorithmic Reuse Across Domains**
 The Fisher-Yates shuffle algorithm proved valuable across:
 - **Computer Vision**: Random sampling for AI processing efficiency
@@ -683,4 +595,4 @@ For backend developers and solution architects, this demonstrates that the most 
 
 *The complete giveaway system implementation is available in the repository as part of the comprehensive Discord community automation platform. This represents practical application of serverless architecture, algorithm design, and user-centered system development suitable for enterprise environments.*
 
-*For the complete technical overview and professional portfolio context, see the [Portfolio Case Study](PORTFOLIO_CASE_STUDY.md) and previous posts: [Part 1: Serverless Architecture](BLOG_POST.md) | [Part 2: AI-Powered Data Collection](BLOG_POST_PART2.md)*
+*For the complete technical overview and professional portfolio context, see the [Portfolio Case Study](docs/PORTFOLIO_CASE_STUDY.md) and previous posts: [Part 1: Serverless Architecture](docs/BLOG_POST.md) | [Part 2: AI-Powered Data Collection](docs/BLOG_POST_PART2.md)*

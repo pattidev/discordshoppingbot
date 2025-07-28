@@ -233,4 +233,4 @@ In Part 2, I'll detail how I built an intelligent data collection system using W
 
 *This project demonstrates practical applications of serverless architecture, user-centered design, and creative problem-solving that apply directly to enterprise system design. The complete technical implementation and case study are available in the repository for developers interested in similar automation challenges.*
 
-*Continue to [Part 2: AI-Powered Data Collection](BLOG_POST_PART2.md) to see how computer vision and artificial intelligence completed the automation journey.*
+*Continue to [Part 2: AI-Powered Data Collection](docs/BLOG_POST_PART2.md) to see how computer vision and artificial intelligence completed the automation journey.*

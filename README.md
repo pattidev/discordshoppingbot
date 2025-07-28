@@ -38,6 +38,14 @@ A **computer vision + AI system** that automatically extracts game data from mob
 - **`/daily`** - Claim daily rewards with 24-hour cooldown
 - **`/leaderboard`** - View top earners across the community
 - **`/coinflip <amount>`** - Gamble coins with daily limits
+- **`/giveaway create <title> <prize> <duration> <winners> [description]`** - Create interactive giveaways
+- **`/giveaway end <id>`** - Manually end a giveaway and select winners
+- **`/giveaway reroll <id>`** - Reroll winners for completed giveaways
+
+### Interactive Components
+- **Giveaway Entry Buttons** - One-click participation with duplicate prevention
+- **Shop Purchase Buttons** - Direct role purchasing from shop embeds
+- **Role Selection Dropdowns** - Smart equip interface for owned roles
 
 ### User Experience Highlights
 - **Interactive Embeds** with rich formatting and images
@@ -46,6 +54,7 @@ A **computer vision + AI system** that automatically extracts game data from mob
 - **Automatic Role Management** with conflict resolution
 - **Ephemeral Responses** for privacy
 - **Error Recovery** with user-friendly messaging
+- **Fair Random Selection** for giveaway winners using randomness
 
 ### Administrative Features
 - **Zero-Code Shop Management** via Google Sheets
@@ -53,6 +62,7 @@ A **computer vision + AI system** that automatically extracts game data from mob
 - **Visual Data Management** with sorting and filtering
 - **Audit Trail** through Google Sheets revision history
 - **Multi-admin Support** with simultaneous editing
+- **Permission-Based Giveaway Management** with role-based access control
 
 ---
 
@@ -323,11 +333,11 @@ ctx.waitUntil(processComplexOperation());
 
 ## 📚 Documentation
 
-- **[Complete Project Journey](PORTFOLIO_CASE_STUDY.md)** - Full technical narrative
-- **[Module Structure Guide](MODULE_STRUCTURE.md)** - Code organization details
-- **[Blog Post Part 1](BLOG_POST.md)** - The serverless bot story
-- **[Blog Post Part 2](BLOG_POST_PART2.md)** - AI data collection adventure
-- **[Technical Case Study](CASE_STUDY.md)** - Architecture deep dive
+- **[Complete Project Journey](docs/PORTFOLIO_CASE_STUDY.md)** - Full technical narrative
+- **[Module Structure Guide](docs/MODULE_STRUCTURE.md)** - Code organization details
+- **[Blog Post Part 1](docs/BLOG_POST.md)** - The serverless bot story
+- **[Blog Post Part 2](docs/BLOG_POST_PART2.md)** - AI data collection adventure
+- **[Technical Case Study](docs/CASE_STUDY.md)** - Architecture deep dive
 
 ---
 
