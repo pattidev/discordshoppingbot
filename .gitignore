@@ -8,8 +8,9 @@ node_modules/
 *.so
 
 .env
+./wrangler.toml
 wrangler.toml
-
+*.toml
 # Distribution / packaging
 .Python
 build/
