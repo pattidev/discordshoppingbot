@@ -1,10 +1,10 @@
 const { REST, Routes } = require("discord.js");
+require("dotenv").config();
 
 // Your Discord bot credentials
-const CLIENT_ID = "1398373714029973535";
-const BOT_TOKEN =
-	"MTM5ODM3MzcxNDAyOTk3MzUzNQ.GTFNWs.bpL8CQ4TqWALMDDYGCCi0N9yYuKorfCQywD870";
-const GUILD_ID = "1374851182245187707"; // Optional: for guild-specific commands (faster testing)
+const CLIENT_ID = process.env.CLIENT_ID;
+const BOT_TOKEN = process.env.BOT_TOKEN;
+const GUILD_ID = process.env.GUILD_ID;
 
 const commands = [
 	{
@@ -14,6 +14,10 @@ const commands = [
 	{
 		name: "shop",
 		description: "Browse and purchase roles from the shop",
+	},
+	{
+		name: "equip",
+		description: "Equip a role you have purchased",
 	},
 ];
 
