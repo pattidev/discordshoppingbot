@@ -17,7 +17,11 @@ const commands = [
 	},
 	{
 		name: "equip",
-		description: "Equip a role you have purchased",
+		description: "Equip role(s) you have purchased",
+	},
+	{
+		name: "unequip",
+		description: "Unequip role(s) you currently have equipped",
 	},
 	{
 		name: "leaderboard",

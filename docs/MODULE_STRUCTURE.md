@@ -13,25 +13,31 @@ src/
 │   │   ├── balanceCommand.js
 │   │   ├── shopCommand.js
 │   │   ├── equipCommand.js
+│   │   ├── unequipCommand.js
 │   │   ├── dailyCommand.js
 │   │   ├── leaderboardCommand.js
-│   │   └── coinflipCommand.js
+│   │   ├── coinflipCommand.js
+│   │   └── giveawayCommand.js
 │   └── components/          # Individual component handlers
 │       ├── index.js
 │       ├── buyButton.js
 │       ├── equipSelect.js
+│       ├── unequipSelect.js
+│       ├── giveawayButton.js
 │       └── shopNavigation.js
 ├── services/                # Business logic services
 │   ├── currencyService.js   # User currency management
 │   ├── itemService.js       # Shop item management
-│   ├── userRoleService.js   # User role management
+│   ├── userRoleService.js   # User role management (multi-role support)
 │   ├── dailyRewardService.js # Daily reward system
 │   ├── coinflipService.js   # Coinflip gambling system
 │   ├── leaderboardService.js # Leaderboard functionality
+│   ├── giveawayService.js   # Giveaway management
 │   └── discordApiService.js # Discord API operations
 ├── utils/                   # Utility functions
 │   ├── googleAuth.js        # Google Sheets authentication
-│   └── discordUtils.js      # Discord utility functions
+│   ├── discordUtils.js      # Discord utility functions
+│   └── permissions.js       # Permission checking utilities
 └── ui/                      # UI builders
     └── shopBuilder.js       # Shop interface builder
 ```
@@ -64,16 +70,17 @@ src/
 ### Handlers
 - **commandHandler.js**: Routes slash commands to appropriate handlers
 - **componentHandler.js**: Routes button clicks and select menus to handlers
-- **commands/**: Individual command implementations (balance, shop, equip, etc.)
-- **components/**: Individual component implementations (buy button, equip select, etc.)
+- **commands/**: Individual command implementations (balance, shop, equip, unequip, etc.)
+- **components/**: Individual component implementations (buy button, equip select, unequip select, etc.)
 
 ### Services
 - **currencyService.js**: Manages user coin balances
 - **itemService.js**: Handles shop items and images
-- **userRoleService.js**: Manages user role purchases and equipment
+- **userRoleService.js**: Manages user role purchases and equipment (supports multiple equipped roles)
 - **dailyRewardService.js**: Handles daily reward claims
 - **coinflipService.js**: Manages coinflip gambling
 - **leaderboardService.js**: Tracks user earnings and rankings
+- **giveawayService.js**: Handles giveaway creation and management
 - **discordApiService.js**: Handles Discord API calls (role assignment)
 
 ### Utils
@@ -109,10 +116,12 @@ The bot expects the following sheets in your Google Spreadsheet:
 
 - `/balance` - Check your coin balance
 - `/shop` - Browse the role shop
-- `/equip` - Equip a purchased role
+- `/equip` - Equip multiple purchased roles simultaneously
+- `/unequip` - Remove specific equipped roles or unequip all
 - `/daily` - Claim daily coin reward
 - `/leaderboard` - View top earners
 - `/coinflip <amount>` - Gamble coins on a coinflip
+- `/giveaway create/end/reroll` - Manage community giveaways
 
 ## Development
 
@@ -120,6 +129,12 @@ To add new commands:
 1. Create a new command handler in `src/handlers/commands/`
 2. Add the export to `src/handlers/commands/index.js`
 3. Add the route in `src/handlers/commandHandler.js`
+4. Register the command in `register-commands.js`
+
+To add new components:
+1. Create a new component handler in `src/handlers/components/`
+2. Add the export to `src/handlers/components/index.js`
+3. Add the route in `src/handlers/componentHandler.js`
 
 To add new services:
 1. Create a new service file in `src/services/`

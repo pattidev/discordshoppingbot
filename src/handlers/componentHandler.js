@@ -5,6 +5,7 @@
 import {
 	handleBuyButton,
 	handleEquipSelect,
+	handleUnequipSelect,
 	handlePageTurn,
 	handleSummaryPage,
 	handleViewDetails,
@@ -24,6 +25,8 @@ export async function handleMessageComponent(interaction, env, ctx) {
 		return await handleBuyButton(interaction, env, ctx);
 	} else if (customId.startsWith("equip_select")) {
 		return await handleEquipSelect(interaction, env, ctx);
+	} else if (customId.startsWith("unequip_select")) {
+		return await handleUnequipSelect(interaction, env, ctx);
 	} else if (
 		customId.startsWith("prev_page_") ||
 		customId.startsWith("next_page_")

@@ -7,6 +7,7 @@ import {
 	handleBalanceCommand,
 	handleShopCommand,
 	handleEquipCommand,
+	handleUnequipCommand,
 	handleDailyCommand,
 	handleLeaderboardCommand,
 	handleCoinflipCommand,
@@ -29,6 +30,8 @@ export async function handleApplicationCommand(interaction, env, ctx) {
 			return await handleShopCommand(interaction, env, ctx);
 		case "equip":
 			return await handleEquipCommand(interaction, env, ctx);
+		case "unequip":
+			return await handleUnequipCommand(interaction, env, ctx);
 		case "daily":
 			return await handleDailyCommand(interaction, env, ctx);
 		case "leaderboard":

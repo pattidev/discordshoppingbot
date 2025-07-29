@@ -4,7 +4,7 @@
 
 import { InteractionResponseType } from "discord-interactions";
 import {
-	getEquippedRole,
+	getEquippedRoles,
 	setEquippedRole,
 } from "../../services/userRoleService.js";
 import {
@@ -20,7 +20,7 @@ import { editInteractionResponse } from "../../utils/discordUtils.js";
 export async function handleEquipSelect(interaction, env, ctx) {
 	const userId = interaction.member.user.id;
 	const guildId = interaction.guild_id;
-	const roleIdToEquip = interaction.data.values[0];
+	const selectedRoleIds = interaction.data.values;
 
 	// Defer the update to give us time to process
 	const deferredPromise = new Response(
@@ -31,64 +31,100 @@ export async function handleEquipSelect(interaction, env, ctx) {
 	ctx.waitUntil(
 		(async () => {
 			try {
-				const currentEquippedRole = await getEquippedRole(userId, env);
+				const currentEquippedRoles = await getEquippedRoles(userId, env);
 				console.log(
-					`Current equipped role for user ${userId}:`,
-					currentEquippedRole
+					`Current equipped roles for user ${userId}:`,
+					currentEquippedRoles
 				);
-
-				// If user is trying to equip the same role, do nothing.
-				if (currentEquippedRole === roleIdToEquip) {
-					await editInteractionResponse(interaction, env, {
-						content: "You already have this role equipped.",
-						components: [], // Remove the dropdown
-						flags: 64,
-					});
-					return;
-				}
-
-				// Remove the old role if it exists
-				if (currentEquippedRole) {
-					await removeRoleFromUser(userId, currentEquippedRole, guildId, env);
-				}
-
-				// Add the new role
-				const roleAssigned = await addRoleToUser(
-					userId,
-					roleIdToEquip,
-					guildId,
-					env
-				);
-				if (!roleAssigned) {
-					await editInteractionResponse(interaction, env, {
-						content:
-							"Failed to apply the new role. Please check bot permissions and try again.",
-						components: [],
-						flags: 64,
-					});
-					// Try to re-add the old role if it existed, to prevent user from being role-less
-					if (currentEquippedRole) {
-						await addRoleToUser(userId, currentEquippedRole, guildId, env);
-					}
-					return;
-				}
-
-				// Update the database
-				await setEquippedRole(userId, roleIdToEquip, env);
 
 				const allItems = await getItems(env);
-				const equippedItem = allItems.find((i) => i.role_id === roleIdToEquip);
-				const roleName = equippedItem ? equippedItem.name : "the selected role";
+				const successfullyEquipped = [];
+				const failedToEquip = [];
+				const alreadyEquipped = [];
+
+				for (const roleIdToEquip of selectedRoleIds) {
+					// Check if user already has this role equipped
+					if (currentEquippedRoles.includes(roleIdToEquip)) {
+						alreadyEquipped.push(roleIdToEquip);
+						continue;
+					}
+
+					// Add the new role to Discord
+					const roleAssigned = await addRoleToUser(
+						userId,
+						roleIdToEquip,
+						guildId,
+						env
+					);
+
+					if (!roleAssigned) {
+						failedToEquip.push(roleIdToEquip);
+						continue;
+					}
+
+					// Update the database
+					const dbResult = await setEquippedRole(userId, roleIdToEquip, env);
+					if (!dbResult) {
+						failedToEquip.push(roleIdToEquip);
+						// Try to remove the role from Discord since DB update failed
+						await removeRoleFromUser(userId, roleIdToEquip, guildId, env);
+						continue;
+					}
+
+					successfullyEquipped.push(roleIdToEquip);
+				}
+
+				// Build response message
+				let responseMessage = "";
+
+				if (successfullyEquipped.length > 0) {
+					const roleNames = successfullyEquipped
+						.map((roleId) => {
+							const item = allItems.find((i) => i.role_id === roleId);
+							return item ? `**${item.name}**` : "Unknown Role";
+						})
+						.join(", ");
+
+					responseMessage += `Successfully equipped: ${roleNames}`;
+				}
+
+				if (alreadyEquipped.length > 0) {
+					const alreadyEquippedNames = alreadyEquipped
+						.map((roleId) => {
+							const item = allItems.find((i) => i.role_id === roleId);
+							return item ? `**${item.name}**` : "Unknown Role";
+						})
+						.join(", ");
+
+					if (responseMessage) responseMessage += "\n\n";
+					responseMessage += `Already equipped: ${alreadyEquippedNames}`;
+				}
+
+				if (failedToEquip.length > 0) {
+					const failedRoleNames = failedToEquip
+						.map((roleId) => {
+							const item = allItems.find((i) => i.role_id === roleId);
+							return item ? `**${item.name}**` : "Unknown Role";
+						})
+						.join(", ");
+
+					if (responseMessage) responseMessage += "\n\n";
+					responseMessage += `Failed to equip: ${failedRoleNames}. Please check bot permissions and try again.`;
+				}
+
+				if (!responseMessage) {
+					responseMessage = "No roles were equipped.";
+				}
 
 				await editInteractionResponse(interaction, env, {
-					content: `You have successfully equipped the **${roleName}** role!`,
+					content: responseMessage,
 					components: [], // Remove the dropdown after selection
 					flags: 64,
 				});
 			} catch (error) {
 				console.error("Error in handleEquipSelect:", error);
 				await editInteractionResponse(interaction, env, {
-					content: "An unexpected error occurred while equipping the role.",
+					content: "An unexpected error occurred while equipping roles.",
 					components: [],
 					flags: 64,
 				});
