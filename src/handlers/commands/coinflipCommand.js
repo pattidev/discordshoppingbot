@@ -21,33 +21,6 @@ export async function handleCoinflipCommand(interaction, env, ctx) {
 			const userName = interaction.member.user.username;
 			const userAvatar = `https://cdn.discordapp.com/avatars/${userId}/${interaction.member.user.avatar}.png`;
 
-			// Check if user can use coinflip (once per day limit)
-			const canFlip = await canUseCoinflip(userId, env);
-
-			if (!canFlip) {
-				const nextFlipTime = await getNextCoinflipTime(userId, env);
-				await editInteractionResponse(interaction, env, {
-					embeds: [
-						{
-							title: "⏰ Daily Coinflip Already Used",
-							description: "You've already used your daily coinflip today!",
-							color: 0xff6b6b, // Red
-							thumbnail: { url: userAvatar },
-							fields: [
-								{
-									name: "Next Coinflip Available",
-									value: `<t:${Math.floor(nextFlipTime / 1000)}:R>`,
-									inline: false,
-								},
-							],
-							footer: { text: "Come back tomorrow to gamble again!" },
-						},
-					],
-					flags: 64,
-				});
-				return;
-			}
-
 			// Get the bet amount from the command options
 			const betAmount = interaction.data.options?.[0]?.value || 0;
 
