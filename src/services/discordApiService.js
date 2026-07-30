@@ -10,8 +10,9 @@
  * @param {object} env - The Cloudflare Worker environment variables.
  * @returns {Promise<boolean>} True if the role was successfully assigned, false otherwise.
  */
-export async function addRoleToUser(userId, roleId, guildId, env) {
+export async function addRoleToUser(userId, roleId, guildId, env, retries = 0) {
 	const url = `https://discord.com/api/v10/guilds/${guildId}/members/${userId}/roles/${roleId}`;
+	const MAX_RETRIES = 3;
 
 	try {
 		const response = await fetch(url, {
@@ -25,6 +26,12 @@ export async function addRoleToUser(userId, roleId, guildId, env) {
 		if (response.ok || response.status === 204) {
 			console.log(`Successfully added role ${roleId} to user ${userId}`);
 			return true;
+		} else if (response.status === 429 && retries < MAX_RETRIES) {
+			const errorData = await response.json();
+			const retryAfter = errorData.retry_after || 1;
+			console.warn(`Rate limited adding role ${roleId} to user ${userId}. Retrying after ${retryAfter} seconds...`);
+			await new Promise(resolve => setTimeout(resolve, retryAfter * 1000));
+			return await addRoleToUser(userId, roleId, guildId, env, retries + 1);
 		} else {
 			const errorText = await response.text();
 			console.error(
@@ -48,8 +55,9 @@ export async function addRoleToUser(userId, roleId, guildId, env) {
  * @param {object} env - The Cloudflare Worker environment variables.
  * @returns {Promise<boolean>} True if the role was successfully removed, false otherwise.
  */
-export async function removeRoleFromUser(userId, roleId, guildId, env) {
+export async function removeRoleFromUser(userId, roleId, guildId, env, retries = 0) {
 	const url = `https://discord.com/api/v10/guilds/${guildId}/members/${userId}/roles/${roleId}`;
+	const MAX_RETRIES = 3;
 
 	try {
 		const response = await fetch(url, {
@@ -62,6 +70,12 @@ export async function removeRoleFromUser(userId, roleId, guildId, env) {
 		if (response.ok || response.status === 204) {
 			console.log(`Successfully removed role ${roleId} from user ${userId}`);
 			return true;
+		} else if (response.status === 429 && retries < MAX_RETRIES) {
+			const errorData = await response.json();
+			const retryAfter = errorData.retry_after || 1;
+			console.warn(`Rate limited removing role ${roleId} from user ${userId}. Retrying after ${retryAfter} seconds...`);
+			await new Promise(resolve => setTimeout(resolve, retryAfter * 1000));
+			return await removeRoleFromUser(userId, roleId, guildId, env, retries + 1);
 		} else {
 			const errorText = await response.text();
 			console.error(
