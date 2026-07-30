@@ -176,6 +176,20 @@ export async function removeEquippedRole(userId, roleId, env) {
 			return true; // Consider it successful if the role wasn't equipped anyway
 		}
 
+		// Fetch the sheet metadata to get the correct sheetId
+		const metaUrl = `https://sheets.googleapis.com/v4/spreadsheets/${env.SPREADSHEET_ID}`;
+		const metaResponse = await fetch(metaUrl, {
+			headers: { Authorization: `Bearer ${token}` },
+		});
+		const metaData = await metaResponse.json();
+		const sheet = metaData.sheets?.find(s => s.properties?.title === sheetName);
+		
+		if (!sheet) {
+			console.error(`Sheet ${sheetName} not found in spreadsheet`);
+			return false;
+		}
+		const sheetId = sheet.properties.sheetId;
+
 		// Delete rows (start from the end to maintain indices)
 		for (let i = rowsToDelete.length - 1; i >= 0; i--) {
 			const rowIndex = rowsToDelete[i];
@@ -191,7 +205,7 @@ export async function removeEquippedRole(userId, roleId, env) {
 						{
 							deleteDimension: {
 								range: {
-									sheetId: 0, // Assuming first sheet
+									sheetId: sheetId, // Use the correct fetched sheetId
 									dimension: "ROWS",
 									startIndex: rowIndex - 1,
 									endIndex: rowIndex,
