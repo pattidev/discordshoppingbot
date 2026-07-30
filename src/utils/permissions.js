@@ -7,10 +7,10 @@
  * Discord permission flags
  */
 export const PERMISSIONS = {
-	ADMINISTRATOR: 0x8,
-	MANAGE_GUILD: 0x20,
-	MANAGE_ROLES: 0x10000000,
-	MANAGE_MESSAGES: 0x2000,
+	ADMINISTRATOR: 0x8n,
+	MANAGE_GUILD: 0x20n,
+	MANAGE_ROLES: 0x10000000n,
+	MANAGE_MESSAGES: 0x2000n,
 };
 
 /**
@@ -23,7 +23,7 @@ export function hasAdminPermissions(interaction) {
 		return false;
 	}
 
-	const permissions = parseInt(interaction.member.permissions);
+	const permissions = BigInt(interaction.member.permissions);
 	return (
 		(permissions & PERMISSIONS.ADMINISTRATOR) === PERMISSIONS.ADMINISTRATOR
 	);
@@ -51,7 +51,7 @@ export function hasShopPermissions(interaction) {
 		return false;
 	}
 
-	const permissions = parseInt(interaction.member.permissions);
+	const permissions = BigInt(interaction.member.permissions);
 	return (
 		(permissions & PERMISSIONS.ADMINISTRATOR) === PERMISSIONS.ADMINISTRATOR ||
 		(permissions & PERMISSIONS.MANAGE_GUILD) === PERMISSIONS.MANAGE_GUILD
