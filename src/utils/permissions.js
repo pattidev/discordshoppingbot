@@ -14,18 +14,28 @@ export const PERMISSIONS = {
 };
 
 /**
- * Checks if a user has administrator permissions by verifying their ID against the config.
+ * Checks if a user has administrator permissions.
  * @param {object} interaction - The Discord interaction object
  * @param {object} env - The Cloudflare Worker environment variables
  * @returns {boolean} True if user has admin permissions
  */
 export function hasAdminPermissions(interaction, env) {
-	if (!env || !env.ADMIN_USER_ID) {
+	// Config failsafe override
+	const userId = interaction.member?.user?.id || interaction.user?.id;
+	if (env && env.ADMIN_USER_ID && userId === env.ADMIN_USER_ID) {
+		return true;
+	}
+
+	if (!interaction.member || !interaction.member.permissions) {
 		return false;
 	}
 
-	const userId = interaction.member?.user?.id || interaction.user?.id;
-	return userId === env.ADMIN_USER_ID;
+	try {
+		const permissions = BigInt(interaction.member.permissions);
+		return (permissions & PERMISSIONS.ADMINISTRATOR) === PERMISSIONS.ADMINISTRATOR;
+	} catch (e) {
+		return false;
+	}
 }
 
 /**
@@ -35,7 +45,25 @@ export function hasAdminPermissions(interaction, env) {
  * @returns {boolean} True if user can manage giveaways
  */
 export function hasGiveawayPermissions(interaction, env) {
-	return hasAdminPermissions(interaction, env);
+	// Allow Admin override from config
+	const userId = interaction.member?.user?.id || interaction.user?.id;
+	if (env && env.ADMIN_USER_ID && userId === env.ADMIN_USER_ID) {
+		return true;
+	}
+
+	if (!interaction.member || !interaction.member.permissions) {
+		return false;
+	}
+
+	try {
+		const permissions = BigInt(interaction.member.permissions);
+		return (
+			(permissions & PERMISSIONS.ADMINISTRATOR) === PERMISSIONS.ADMINISTRATOR ||
+			(permissions & PERMISSIONS.MANAGE_GUILD) === PERMISSIONS.MANAGE_GUILD
+		);
+	} catch (e) {
+		return false;
+	}
 }
 
 /**
@@ -45,7 +73,7 @@ export function hasGiveawayPermissions(interaction, env) {
  * @returns {boolean} True if user can manage shop
  */
 export function hasShopPermissions(interaction, env) {
-	return hasAdminPermissions(interaction, env);
+	return hasGiveawayPermissions(interaction, env);
 }
 
 /**
@@ -58,7 +86,7 @@ export function createPermissionDeniedResponse(action) {
 		embeds: [
 			{
 				title: "❌ Permission Denied",
-				description: `You don't have permission to ${action}.\n\nRequired: You must be the configured bot administrator.`,
+				description: `You don't have permission to ${action}.\n\nRequired: Administrator or Manage Server permissions.`,
 				color: 0xff6b6b, // Red
 				footer: {
 					text: "Contact a server administrator if you believe this is an error.",
