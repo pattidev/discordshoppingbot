@@ -16,7 +16,13 @@ import { editInteractionResponse } from "../../utils/discordUtils.js";
  */
 export async function handleBuyButton(interaction, env, ctx) {
 	const userId = interaction.member.user.id;
-	const roleIdToBuy = interaction.data.custom_id.split("_")[1];
+	
+	let roleIdToBuy;
+	if (interaction.data.custom_id === "shop_buy_select") {
+		roleIdToBuy = interaction.data.values[0];
+	} else {
+		roleIdToBuy = interaction.data.custom_id.split("_")[1];
+	}
 
 	// Defer the response to avoid timeout
 	const deferredPromise = new Response(

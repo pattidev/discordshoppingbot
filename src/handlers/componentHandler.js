@@ -21,7 +21,7 @@ import { handleGiveawayEnter } from "./components/giveawayButton.js";
 export async function handleMessageComponent(interaction, env, ctx) {
 	const customId = interaction.data.custom_id;
 
-	if (customId.startsWith("buy_")) {
+	if (customId.startsWith("buy_") || customId === "shop_buy_select") {
 		return await handleBuyButton(interaction, env, ctx);
 	} else if (customId.startsWith("equip_select")) {
 		return await handleEquipSelect(interaction, env, ctx);

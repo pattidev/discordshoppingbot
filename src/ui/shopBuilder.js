@@ -190,29 +190,29 @@ async function buildSummaryPage(items, balance) {
 		],
 	});
 
-	// Add quick buy buttons for affordable items (max 5 buttons per row, max 25 total)
+	// Add a dropdown menu for quick buying affordable items (max 25 options)
 	const affordableItems = items
 		.filter((item) => balance >= item.price)
-		.slice(0, 20);
+		.slice(0, 25);
 
 	if (affordableItems.length > 0) {
-		const buttonRows = [];
-		for (let i = 0; i < affordableItems.length; i += 5) {
-			const rowItems = affordableItems.slice(i, i + 5);
-			const buttons = rowItems.map((item) => ({
-				type: 2,
-				style: 3, // Success (green)
-				label: `Buy ${item.name}`,
-				custom_id: `buy_${item.role_id}`,
-			}));
+		const options = affordableItems.map((item) => ({
+			label: item.name,
+			value: item.role_id,
+			description: `Buy for ${item.price.toLocaleString()} coins`,
+		}));
 
-			buttonRows.push({
-				type: 1,
-				components: buttons,
-			});
-		}
-
-		components.push(...buttonRows);
+		components.push({
+			type: 1,
+			components: [
+				{
+					type: 3, // String Select
+					custom_id: "shop_buy_select",
+					placeholder: "Quick Buy an item...",
+					options: options,
+				},
+			],
+		});
 	}
 
 	return { embed, components };
