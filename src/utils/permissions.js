@@ -14,48 +14,38 @@ export const PERMISSIONS = {
 };
 
 /**
- * Checks if a user has administrator permissions.
+ * Checks if a user has administrator permissions by verifying their ID against the config.
  * @param {object} interaction - The Discord interaction object
+ * @param {object} env - The Cloudflare Worker environment variables
  * @returns {boolean} True if user has admin permissions
  */
-export function hasAdminPermissions(interaction) {
-	if (!interaction.member || !interaction.member.permissions) {
+export function hasAdminPermissions(interaction, env) {
+	if (!env || !env.ADMIN_USER_ID) {
 		return false;
 	}
 
-	const permissions = BigInt(interaction.member.permissions);
-	return (
-		(permissions & PERMISSIONS.ADMINISTRATOR) === PERMISSIONS.ADMINISTRATOR
-	);
+	const userId = interaction.member?.user?.id || interaction.user?.id;
+	return userId === env.ADMIN_USER_ID;
 }
 
 /**
  * Checks if a user has permissions to manage giveaways.
- * Currently requires administrator permissions, but could be expanded.
  * @param {object} interaction - The Discord interaction object
+ * @param {object} env - The Cloudflare Worker environment variables
  * @returns {boolean} True if user can manage giveaways
  */
-export function hasGiveawayPermissions(interaction) {
-	// For now, require administrator permissions
-	// Could be expanded to include specific roles or other permissions
-	return hasAdminPermissions(interaction);
+export function hasGiveawayPermissions(interaction, env) {
+	return hasAdminPermissions(interaction, env);
 }
 
 /**
  * Checks if a user has permissions to manage the shop.
  * @param {object} interaction - The Discord interaction object
+ * @param {object} env - The Cloudflare Worker environment variables
  * @returns {boolean} True if user can manage shop
  */
-export function hasShopPermissions(interaction) {
-	if (!interaction.member || !interaction.member.permissions) {
-		return false;
-	}
-
-	const permissions = BigInt(interaction.member.permissions);
-	return (
-		(permissions & PERMISSIONS.ADMINISTRATOR) === PERMISSIONS.ADMINISTRATOR ||
-		(permissions & PERMISSIONS.MANAGE_GUILD) === PERMISSIONS.MANAGE_GUILD
-	);
+export function hasShopPermissions(interaction, env) {
+	return hasAdminPermissions(interaction, env);
 }
 
 /**
@@ -68,7 +58,7 @@ export function createPermissionDeniedResponse(action) {
 		embeds: [
 			{
 				title: "❌ Permission Denied",
-				description: `You don't have permission to ${action}.\n\nRequired: Administrator permissions`,
+				description: `You don't have permission to ${action}.\n\nRequired: You must be the configured bot administrator.`,
 				color: 0xff6b6b, // Red
 				footer: {
 					text: "Contact a server administrator if you believe this is an error.",

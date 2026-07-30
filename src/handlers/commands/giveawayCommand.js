@@ -48,7 +48,7 @@ export async function handleGiveawayCommand(interaction, env, ctx) {
  */
 async function handleCreateGiveaway(interaction, env, ctx) {
 	// Check permissions first
-	if (!hasGiveawayPermissions(interaction)) {
+	if (!hasGiveawayPermissions(interaction, env)) {
 		return new Response(
 			JSON.stringify({
 				type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
@@ -145,7 +145,7 @@ async function handleCreateGiveaway(interaction, env, ctx) {
  */
 async function handleEndGiveaway(interaction, env, ctx) {
 	// Check permissions first
-	if (!hasGiveawayPermissions(interaction)) {
+	if (!hasGiveawayPermissions(interaction, env)) {
 		return new Response(
 			JSON.stringify({
 				type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
@@ -233,7 +233,7 @@ async function handleEndGiveaway(interaction, env, ctx) {
  */
 async function handleRerollGiveaway(interaction, env, ctx) {
 	// Check permissions first
-	if (!hasGiveawayPermissions(interaction)) {
+	if (!hasGiveawayPermissions(interaction, env)) {
 		return new Response(
 			JSON.stringify({
 				type: InteractionResponseType.CHANNEL_MESSAGE_WITH_SOURCE,
