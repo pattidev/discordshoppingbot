@@ -1,0 +1,6 @@
+name = "shopping-discordbot"
+main = "src/index.js"
+compatibility_date = "2025-07-30"
+
+[observability]
+enabled = true
