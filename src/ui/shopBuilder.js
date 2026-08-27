@@ -148,8 +148,9 @@ async function buildSummaryPage(items, balance) {
 		},
 	};
 
-	// Add a field for each item in the summary
-	for (let i = 0; i < items.length; i++) {
+	// Add a field for each item in the summary (max 25 fields per embed; 2 are used above)
+	const MAX_ITEMS = 23;
+	for (let i = 0; i < Math.min(items.length, MAX_ITEMS); i++) {
 		const item = items[i];
 		const canAfford = balance >= item.price;
 		const statusIcon = canAfford ? "✅" : "❌";
@@ -172,6 +173,14 @@ async function buildSummaryPage(items, balance) {
 			value: fieldValue,
 			inline: true,
 		});
+	}
+
+	// Point out any items not shown so users can find them in the detail view
+	if (items.length > MAX_ITEMS) {
+		const hidden = items.length - MAX_ITEMS;
+		embed.description += `\n\n**+${hidden} more item${
+			hidden === 1 ? "" : "s"
+		}** — use **🔍 View Item Details** and the ◀️/▶️ buttons to browse them.`;
 	}
 
 	// Create buttons for detailed view and quick buy options
